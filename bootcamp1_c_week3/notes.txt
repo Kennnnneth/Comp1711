@@ -1,0 +1,10 @@
+To write better structured code, we're going to have
+- The main program
+- A header file that contains the forward declarations of the functions (utils.h)
+- Another c file that contains the contents of each function (utils.c)
+
+To compile all the files that are using the header we will do the following
+
+gcc -c utils.c // will produce utils.o
+gcc -c create_file_h.c // will produce create_file_h.o
+gcc create_file_h.o utils.o -o create_file // puts both files into 1 executible
