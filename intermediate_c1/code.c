@@ -1,7 +1,4 @@
 #include "utilities.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 int main()
 {
@@ -10,6 +7,8 @@ int main()
 
     char line[buffer_size];
     char filename[buffer_size];
+    char temps[buffer_size];
+    int error = 0;
 
     // get filename from the user
     printf("Please enter the name of the data file: ");
@@ -24,7 +23,6 @@ int main()
     int counter = 0;
     float mean = 0;
     float tempd = 0;
-    char temps[100];
 
     FILE *input = fopen(filename, "r");
         if (!input)
@@ -107,14 +105,33 @@ int main()
 
         case 'E':
         case 'e':
-            printf("Enter S, O or N to see the results for SEP, OCT or NOV: ");
-            scanf("%s", temps);
-            atoi(temps);
+            // This snippet works, but using the function is easier
+
+            // printf("Enter S, O or N to see the results for September, October or November: ");
+            // fgets(line, buffer_size, stdin);
+            // sscanf(line, " %s ", temps);
+
+            // for (int i = 0; i < counter; i++) {
+            //     if (*temps == *&daily_readings[i].date[3]) {
+            //         printf("%s - Blood iron: %.1f\n", daily_readings[i].date, daily_readings[i].bloodIron);
+            //     }
+            // }
+
+            // This version uses the function strstr to check if the second parameter appears in the first
+            printf("Enter the month you would like to see. SEP, OCT or NOV: ");
+            fgets(line, buffer_size, stdin);
+            sscanf(line, " %s ", temps);
 
             for (int i = 0; i < counter; i++) {
-                if (temps == daily_readings[i].date[3]) {
+                if (strstr(daily_readings[i].date, temps)) {
                     printf("%s - Blood iron: %.1f\n", daily_readings[i].date, daily_readings[i].bloodIron);
+                } else if (!strstr("SEP, OCT, NOV", temps)){
+                    error = 1;
                 }
+            }
+            if (error == 1) {
+                printf("<Error, Please enter the correct prompt>\n");
+                error = 0;
             }
             break;
 
