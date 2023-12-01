@@ -39,20 +39,21 @@ void tokeniseRecord(const char *input, const char *delimiter,
 
 // Complete the main function
 int main() {
-    char line[buffer_size];
-    char filename[buffer_size];
-    int error = 0;
-    char choice;
+    FITNESS_DATA data[1000] = {};
+    char line[buffer_size], filename[buffer_size] = "", steps[buffer_size], choice;
+    int counter = 0, temp_s, temp_i, sum, count, largest_s, largest_e;
+    FILE* input;
     
     while (1)
     {
-        printf("\nA: Enter the filename to be imported\n");
-        printf("B: View the Total number of records in the file\n");
-        printf("C: View the date and time of the timeslot with the fewest steps\n");
-        printf("D: View the data and time of the timeslot with the largest number of steps\n");
-        printf("E: View the mean step count of all the records in the file\n");
-        printf("F: View the longest continuous period where the step count is above 500 steps\n");
-        printf("Q: Exit the program\n\n");
+        printf("Menu Options:\n");
+        printf("A: Specify the filename to be imported\n");
+        printf("B: Display the total number of records in the file\n");
+        printf("C: Find the date and time of the timeslot with the fewest steps\n");
+        printf("D: Find the date and time of the timeslot with the largest number of steps\n");
+        printf("E: Find the mean step count of all the records in the file\n");
+        printf("F: Find the longest continuous period where the step count is above 500 steps\n");
+        printf("Q: Quit\n");
         printf("Enter your choice: ");
         
         // get the next character typed in and store in the 'choice'
@@ -62,64 +63,103 @@ int main() {
         // as otherwise this will stay in the stdin and be read next time
         while (getchar() != '\n');
 
-        printf("\n");
         // switch statement to control the menu.
         switch (choice)
         {
         // this allows for either capital or lower case
         case 'A':
         case 'a':
-            if (input != "") {
+            if (strcmp(filename, "") != 0) {
                 fclose(input);
             }
+            printf("Input filename: "); //FitnessData_2023.csv
 
             fgets(line, buffer_size, stdin);
             sscanf(line, " %s ", filename);
 
             FILE *input = fopen(filename, "r");
-                if (!input)
-                {
-                    printf("Error: File could not be opened\n");
+                if (!input) {
+                    printf("\nError: Could not find or open the file.\n");
                     return 1;
+                } else {
+                    printf("File successfully loaded.\n");
+                    while (fgets(line, buffer_size, input)) {
+                        tokeniseRecord(line, ",", data[counter].date, data[counter].time, steps);
+                        data[counter].steps = atoi(steps);
+                        sum += data[counter].steps;
+                        counter++;
+                    }
                 }
-            printf("Input filename: %s", filename);
             break;
 
         case 'B':
         case 'b':
-            // printf("Total records: %d", &total);
+            printf("Total records: %d\n", counter);
             break;
 
         case 'C':
         case 'c':
-            // printf("Fewest steps: %s", date);
+            temp_s = data[0].steps;
+            temp_i = 0;
+            for (int i = 0; i < counter; i++) {
+                if (data[i].steps < temp_s) {
+                    temp_s = data[i].steps;
+                    temp_i = i;
+                }
+            }
+            printf("Fewest steps: %s %s\n", data[temp_i].date, data[temp_i].time);
             break;
 
         case 'D':
         case 'd':
-            // printf("Largest steps: %s", date);
+            temp_s = data[0].steps;
+            temp_i = 0;
+
+            for (int i = 0; i < counter; i++) {
+                if (data[i].steps > temp_s) {
+                    temp_i += 1;
+                }
+            }
+            printf("Largest steps: %s %s\n", data[temp_i].date, data[temp_i].time);
             break;
 
         case 'E':
         case 'e':
-            // printf("Mean step count: %d", &mean);
+            printf("Mean step count: %d\n", sum / counter);
             break;
 
         case 'F':
         case 'f':
-            // printf("Longest period start: %s", longest_start);
-            // printf("Longest period end: %s", longest_end);
+            largest_s = largest_e = temp_i = count = 0;
+            for (int i = 0; i < counter; i++) {
+                if (data[i].steps > 500) {
+                    count += 1;
+                    if (count > temp_i) {
+                        temp_i = count;
+                    }
+                } else {
+                    if (temp_i == count) {
+                        largest_s = i - count;
+                        largest_e = i - 1;
+                        count = 0;
+                    }
+                }
+            }
+            printf("Longest period start: %s %s\n", data[largest_s].date, data[largest_s].time);
+            printf("Longest period end: %s %s\n", data[largest_e].date, data[largest_e].time);
             break;
 
         case 'Q':
         case 'q':
-            fclose(input);
+            if (strcmp(filename, "") != 0) {
+                fclose(input);
+            } 
             return 0;
             break;
 
         // if they type anything else:
         default:
-            printf("Invalid choice\n\n");
+            printf("Invalid choice. Try again.\n");
             break;
         }
     }
