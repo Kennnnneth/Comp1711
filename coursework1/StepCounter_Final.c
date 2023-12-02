@@ -41,7 +41,7 @@ void tokeniseRecord(const char *input, const char *delimiter,
 int main() {
     FITNESS_DATA data[1000] = {};
     char line[buffer_size], filename[buffer_size] = "", steps[buffer_size], choice;
-    int counter = 0, temp_s, temp_i, sum, count, largest_s, largest_e;
+    int counter = 0, temp_s, temp_i, sum = 0, mean, count, largest_s, largest_e;
     FILE* input;
     
     while (1)
@@ -54,22 +54,16 @@ int main() {
         printf("E: Find the mean step count of all the records in the file\n");
         printf("F: Find the longest continuous period where the step count is above 500 steps\n");
         printf("Q: Quit\n");
-        printf("Enter your choice: ");
+        printf("Enter choice: ");
         
-        // get the next character typed in and store in the 'choice'
         choice = getchar();
-
-        // this gets rid of the newline character which the user will enter
-        // as otherwise this will stay in the stdin and be read next time
         while (getchar() != '\n');
-
-        // switch statement to control the menu.
         switch (choice)
         {
-        // this allows for either capital or lower case
+
         case 'A':
         case 'a':
-            if (strcmp(filename, "") != 0) {
+            if((input=fopen(filename, "r")) != NULL) {
                 fclose(input);
             }
             printf("Input filename: "); //FitnessData_2023.csv
@@ -112,12 +106,11 @@ int main() {
 
         case 'D':
         case 'd':
-            temp_s = data[0].steps;
-            temp_i = 0;
-
+            temp_s = temp_i = 0;
             for (int i = 0; i < counter; i++) {
                 if (data[i].steps > temp_s) {
-                    temp_i += 1;
+                    temp_s = data[i].steps;
+                    temp_i = i;
                 }
             }
             printf("Largest steps: %s %s\n", data[temp_i].date, data[temp_i].time);
@@ -125,7 +118,8 @@ int main() {
 
         case 'E':
         case 'e':
-            printf("Mean step count: %d\n", sum / counter);
+            mean = sum / counter;
+            printf("Mean step count: %d\n", mean);
             break;
 
         case 'F':
@@ -151,13 +145,12 @@ int main() {
 
         case 'Q':
         case 'q':
-            if (strcmp(filename, "") != 0) {
+           if((input=fopen(filename, "r")) != NULL) {
                 fclose(input);
-            } 
+            }
             return 0;
             break;
 
-        // if they type anything else:
         default:
             printf("Invalid choice. Try again.\n");
             break;
@@ -165,12 +158,3 @@ int main() {
     }
 
 }
-
-
-
-
-
-
-
-
-
