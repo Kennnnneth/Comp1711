@@ -44,13 +44,8 @@ int main() {
     int error = 0;
     char choice;
 
-    if (strcmp(filename, "") != 0) {
-        printf("closed1");
-    }
+    int x = 6;
+    char y[2] = "7";
 
-    strcpy(filename, "fitneess_data.h");
-
-    if (strcmp(filename, "") != 0) {
-        printf("closed2");
-    }
+    printf("")    
 }
