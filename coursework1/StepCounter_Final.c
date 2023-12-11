@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "FitnessDataStruct.h"
 
 // Struct moved to header file
@@ -78,8 +79,9 @@ int main() {
                 } else {
                     printf("File successfully loaded.\n");
                     while (fgets(line, buffer_size, input)) {
-                        tokeniseRecord(line, ",", data[counter].date, data[counter].time, data[counter].steps);
-                        sum += atoi(data[counter].steps);
+                        tokeniseRecord(line, ",", data[counter].date, data[counter].time, steps);
+                        data[counter].steps = atoi(steps);
+                        sum += data[counter].steps;
                         counter++;
                     }
                 }
@@ -92,11 +94,11 @@ int main() {
 
         case 'C':
         case 'c':
-            temp_s = atoi(data[0].steps);
+            temp_s = data[0].steps;
             temp_i = 0;
             for (int i = 0; i < counter; i++) {
-                if (atoi(data[i].steps) < temp_s) {
-                    temp_s = atoi(data[i].steps);
+                if (data[i].steps < temp_s) {
+                    temp_s = data[i].steps;
                     temp_i = i;
                 }
             }
@@ -107,8 +109,8 @@ int main() {
         case 'd':
             temp_s = temp_i = 0;
             for (int i = 0; i < counter; i++) {
-                if (atoi(data[i].steps} > temp_s) {
-                    temp_s = atoi(data[i].steps};
+                if (data[i].steps > temp_s) {
+                    temp_s = data[i].steps;
                     temp_i = i;
                 }
             }
@@ -117,7 +119,7 @@ int main() {
 
         case 'E':
         case 'e':
-            mean = sum / counter;
+            mean = round(sum / counter);
             printf("Mean step count: %d\n", mean);
             break;
 
@@ -125,7 +127,7 @@ int main() {
         case 'f':
             largest_s = largest_e = temp_i = count = 0;
             for (int i = 0; i < counter; i++) {
-                if (atoi(data[i].steps} > 500) {
+                if (data[i].steps > 500) {
                     count += 1;
                     if (count > temp_i) {
                         temp_i = count;

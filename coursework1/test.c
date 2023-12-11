@@ -45,7 +45,9 @@ int main() {
     char choice;
 
     int x = 6;
-    char y[2] = "7";
+    char y[100] = "7";
 
-    printf("")    
+    // strcpy(y, strcat("tr", "y"));
+    printf("%s\n", y);  
+    printf("%s\n", strcat("tr", "y"));
 }

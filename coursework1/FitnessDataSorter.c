@@ -12,7 +12,7 @@ typedef struct {
 #define buffer_size 100
 FitnessData data[1000] = {};
 char line[buffer_size], filename[buffer_size], steps[buffer_size];
-int i = 0;
+int i = 0, counter = 0, max = 0, min, condition = 0, check[1000];
 
 // Function to tokenize a record
 void tokeniseRecord(char *record, char delimiter, char *date, char *time, int *steps) {
@@ -30,20 +30,58 @@ void tokeniseRecord(char *record, char delimiter, char *date, char *time, int *s
     }
 }
 
-
 int main() {
+    for (int i = 0; i < buffer_size; i++) {
+        check[i] = 999;
+    }
+    i = 0;
+
     printf("Enter Filename: "); //FitnessData_2023.csv
 
     fgets(line, buffer_size, stdin);
     sscanf(line, " %s ", filename);
 
-    File* input = fopen(filename, "w");
+    FILE* input1 = fopen(filename, "r");
+    if (!input1) {
+        return 1;
+    }
+    
+    strcat(filename, ".tsv");
 
-    while (fgets(line, buffer_size, input)) {
-        tokeniseRecord(line, ",", data[i].date, data[i].time, data[i].steps);
-        data[i].steps = atoi(steps);
+    FILE* input2 = fopen(filename, "w");
+
+
+    while (fgets(line, buffer_size, input1)) {
+        tokeniseRecord(line, *",", data[counter].date, data[counter].time, &data[counter].steps);
+        counter++;
     }
 
-    printf("Data sorted and written to %s.tsv", filename);
-    
+    for (int i = 0; i < counter; i++) 
+        { if (data[i].steps > max) { max = data[i].steps; }}
+
+    for (int i = 0; i < counter; i++) {
+        min = max + 1;
+        
+        for (int j = 0; j < counter; j++) {
+            for (int y = 0; y < counter; y++) {
+                if (check[y] == j) { 
+                    condition = 1; 
+                    break; }
+            }
+
+            if (condition == 1) {
+                condition = 0;
+                continue; }
+
+            if (data[j].steps < min) {
+                min = data[j].steps;
+                check[i] = j; }
+            
+        }
+
+        fprintf(input2, "%s\t%s\t%d\n", data[check[i]].date, data[check[i]].time, data[check[i]].steps);
+        // fprintf(input2, "%s\t%s\t%d\n", data[i].date, data[i].time, data[i].steps);
+        // printf("%s, %s, %d\n", data[check[i]].date, data[check[i]].time, data[check[i]].steps);
+    }
+    printf("Data sorted and written to %s\n", filename);
 }
