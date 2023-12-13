@@ -34,7 +34,6 @@ int main() {
     for (int i = 0; i < buffer_size; i++) {
         check[i] = 999;
     }
-    i = 0;
 
     printf("Enter Filename: "); //FitnessData_2023.csv
 
@@ -56,11 +55,8 @@ int main() {
         counter++;
     }
 
-    for (int i = 0; i < counter; i++) 
-        { if (data[i].steps > max) { max = data[i].steps; }}
-
     for (int i = 0; i < counter; i++) {
-        min = max + 1;
+        max = -1;
         
         for (int j = 0; j < counter; j++) {
             for (int y = 0; y < counter; y++) {
@@ -73,8 +69,8 @@ int main() {
                 condition = 0;
                 continue; }
 
-            if (data[j].steps < min) {
-                min = data[j].steps;
+            if (data[j].steps > max) {
+                max = data[j].steps;
                 check[i] = j; }
             
         }
